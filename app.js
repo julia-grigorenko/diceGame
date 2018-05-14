@@ -88,7 +88,7 @@ var rollDice = function () {
   if (gamePlaying) {
     // 1. Random number
 
-      dice = getRandomInt(4,6);
+      dice = getRandomInt(1,6);
 
 
 
@@ -138,7 +138,7 @@ var holdScores = function () {
     document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
 
     // 3. Check if player won the game
-    if (scores[activePlayer] >= 20) {
+    if (scores[activePlayer] >= 100) {
       console.log(scores[activePlayer]+ '>20');
       document.querySelector('#name-' + activePlayer).textContent = 'WINNER!';
       document.querySelector('.player-' + activePlayer + "-panel").classList.add('winner');
