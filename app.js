@@ -1,11 +1,11 @@
 'use strict';
 // New rule modification:
-// Add an input field to the HTML where players can set the winning score, so that they can change the
-// predefined score of 100.
+// Add another dice to the game, so that there are two dices now. The player looses his current score
+// when one of them is a 1.
 
-var activePlayer, scores, dice, previousDice, gamePlaying, roundScore, finalScore;
+var activePlayer, scores, dice, dices, previousDice, gamePlaying, roundScore, finalScore, isOne;
 
-var diceDom = document.querySelector('.dice');
+var diceDom = document.querySelectorAll('.dice');
 var scorePlayer1 = document.getElementById('score-0');
 var scorePlayer2 = document.getElementById('score-1');
 
@@ -19,7 +19,7 @@ var newBtn = document.querySelector('.btn-new');
 var finalScoreElem = document.querySelector('.final-score');
 
 var getInputValue = function () {
-  finalScore = finalScoreElem.value;    
+  finalScore = finalScoreElem.value;
   return finalScore;
 };
 
@@ -27,10 +27,12 @@ var init = function () {
   finalScore = 10;
   finalScoreElem.value = finalScore;
   scores = [0,0];
+  dices = [];
   activePlayer = 0;
   roundScore = 0;
   gamePlaying = true;
-  previousDice = 0;
+  isOne = false;
+  dice = 0;
 
   var player1 = document.getElementById('name-0');
   var player2 = document.getElementById('name-1');
@@ -38,7 +40,10 @@ var init = function () {
   var playerPanel1 = document.querySelector('.player-0-panel');
   var playerPanel2 = document.querySelector('.player-1-panel');
 
-  diceDom.style.display = 'none';
+  // diceDom.style.display = 'none';
+  for (var i = 0; i < diceDom.length; i++) {
+    diceDom[i].style.display = 'none';
+  }
 
   scorePlayer1.textContent = 0;
   scorePlayer2.textContent = 0;
@@ -71,15 +76,17 @@ var switchPlayerPanel = function () {
   document.querySelector('.player-0-panel').classList.toggle('active');
   document.querySelector('.player-1-panel').classList.toggle('active');
 
-  // 2.hide the dice
-  diceDom.style.display = 'none';
+  // 2.hide the dices
+  for (var i = 0; i < diceDom.length; i++) {
+    diceDom[i].style.display = 'none';
+  }
 };
 
 
 var nextPlayer = function () {
   // 1.Set 0 current scores to previous player
   roundScore = 0;
-  previousDice = 0;
+  isOne = false;
 
   // 2.display  previous player`s current scores
   document.querySelector('#current-' + activePlayer).textContent = roundScore;
@@ -91,49 +98,41 @@ var nextPlayer = function () {
   setTimeout(switchPlayerPanel, 700);
 };
 
+var checkDicesForOne = function () {
+  for (var i = 0; i < diceDom.length; i++) {
+    if (dices[i] === 1) {
+      isOne = true;    
+    }
+   }
+};
 
 var rollDice = function () {
   if (gamePlaying) {
     // 1. Random number
+    for (var i = 0; i < diceDom.length; i++) {
+      dices[i] = getRandomInt(1,6);
+      dice += dices[i];
+    }
+    checkDicesForOne();
 
-      dice = getRandomInt(1,6);
+    // 2. Display the result
+    for (var i = 0; i < diceDom.length; i++) {
+      diceDom[i].style.display = 'block';
+    }
 
+    for (var i = 0; i < diceDom.length; i++) {
+      diceDom[i].src = 'img/dice-' + dices[i] + '.png';
+    }
 
-
-
-      // 2. Display the result
-      diceDom.style.display = 'block';
-      diceDom.src = 'img/dice-' + dice + '.png';
-
-      // 3. Update the round score if the rolld number was not a 1
-      if (dice !== 1) {
-        if (previousDice === dice ) {
-          console.log(11);
-          roundScore = 0;
-          scores[activePlayer] = 0;
-          document.querySelector('#current-' + activePlayer).textContent = roundScore;
-          document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
-          nextPlayer();
-
-        } else if (dice === 6 && previousDice !== dice) {
-          console.log(12);
-          previousDice = dice;
-
-          // Add score
-          roundScore += dice;
-          document.querySelector('#current-' + activePlayer).textContent = roundScore;
-        } else {
-          console.log(13);
-          // Add score
-          previousDice = 0;
-          roundScore += dice;
-          document.querySelector('#current-' + activePlayer).textContent = roundScore;
-        }
-      } else {
-        // 4. Turn to next player
-        nextPlayer();
-      }
-
+    // 3. Update the round score if the rolld number was not a 1
+    if (!isOne) {
+        // Add score
+        roundScore += dice;
+        document.querySelector('#current-' + activePlayer).textContent = roundScore;
+    } else {
+      // 4. Turn to next player
+      nextPlayer();
+    }
   }
 };
 
@@ -147,7 +146,6 @@ var holdScores = function () {
 
     // 3. Check if player won the game
     if (scores[activePlayer] >= finalScore) {
-      console.log(scores[activePlayer]+ '>20');
       document.querySelector('#name-' + activePlayer).textContent = 'WINNER!';
       document.querySelector('.player-' + activePlayer + "-panel").classList.add('winner');
       document.querySelector('.player-' + activePlayer + "-panel").classList.remove('active');
