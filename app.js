@@ -1,14 +1,33 @@
 'use strict';
 
-var scores, roundScore, player, activePlayer, player1Score, dicePictures;
+var scores, roundScore, player, activePlayer, player1Score, dicePictures, gamePlaying;
 
-scores = [0, 0];
-roundScore = 0;
-activePlayer = 0;
-document.querySelector('#score-0').textContent = 0;
-document.querySelector('#score-1').textContent = 0;
-document.querySelector('#current-0').textContent = 0;
-document.querySelector('#current-1').textContent = 0;
+function init () {
+  scores = [0, 0];
+  roundScore = 0;
+  activePlayer = 0;
+
+  gamePlaying = true;
+
+  var diceDom = document.querySelector('.dice');
+  diceDom.style.display = 'none';
+
+  document.getElementById('score-0').textContent = 0;
+  document.getElementById('score-1').textContent = 0;
+  document.getElementById('current-0').textContent = 0;
+  document.getElementById('current-1').textContent = 0;
+
+  document.getElementById('name-0').textContent = 'Player 1';
+  document.getElementById('name-1').textContent = 'Player 2';
+
+  document.querySelector('.player-0-panel').classList.remove('winner');
+  document.querySelector('.player-1-panel').classList.remove('winner');
+
+  document.querySelector('.player-0-panel').classList.remove('active');
+  document.querySelector('.player-1-panel').classList.remove('active');
+
+  document.querySelector('.player-0-panel').classList.add('active');
+}
 
 
 var getRandomInt = function (min, max) {
@@ -23,6 +42,8 @@ for (var i =  0; i < diceDom.length; i ++) {
 
 var activeScore = document.querySelector('#current-' + activePlayer);
 var rollDice = document.querySelector('.btn-roll');
+var holdDice = document.querySelector('.btn-hold');
+var initDice = document.querySelector('.btn-new');
 
 function nextPlayer () {
   var diceDom = document.querySelector('.dice');
@@ -33,6 +54,7 @@ function nextPlayer () {
   document.querySelector('.player-1-panel').classList.toggle('active');
   diceDom.style.display = 'none';
 }
+
 function rollBtn () {
   // 1. Random number
   var dice = getRandomInt(1,6);
@@ -53,10 +75,6 @@ function rollBtn () {
     nextPlayer();
   }
 }
-
-rollDice.addEventListener('click', rollBtn);
-
-var holdDice = document.querySelector('.btn-hold');
 
 function holdBtn () {
   // Add CURRENT score to GLOBAL score
@@ -84,12 +102,18 @@ function holdBtn () {
   if (scores[activePlayer] >= 20) {
     document.querySelector('#name-' + activePlayer).textContent = 'WINNER!';
     document.querySelector('.player-' + activePlayer + "-panel").classList.add('winner');
-    document.querySelector('.player-' + activePlayer + "-panel").classList.remove('active');  
+    document.querySelector('.player-' + activePlayer + "-panel").classList.remove('active');
+    gamePlaying = false
+
     // diceDom.style.display = 'none';
   }else {
     nextPlayer();
   }
-
 }
 
-holdDice.addEventListener('click', holdBtn);
+init();
+if (gamePlaying) {
+  rollDice.addEventListener('click', rollBtn);
+  holdDice.addEventListener('click', holdBtn);
+  initDice.addEventListener('click', init);
+}
