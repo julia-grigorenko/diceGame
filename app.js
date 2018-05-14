@@ -1,9 +1,9 @@
 'use strict';
 // New rule modification:
-// A player looses his ENTIRE score when he rolls two 6 in a row.
-// After that, it`s the next player`s turn.
+// Add an input field to the HTML where players can set the winning score, so that they can change the
+// predefined score of 100.
 
-var activePlayer, scores, dice, previousDice, gamePlaying, roundScore;
+var activePlayer, scores, dice, previousDice, gamePlaying, roundScore, finalScore;
 
 var diceDom = document.querySelector('.dice');
 var scorePlayer1 = document.getElementById('score-0');
@@ -16,8 +16,16 @@ var rollBtn = document.querySelector('.btn-roll');
 var holdBtn = document.querySelector('.btn-hold');
 var newBtn = document.querySelector('.btn-new');
 
+var finalScoreElem = document.querySelector('.final-score');
+
+var getInputValue = function () {
+  finalScore = finalScoreElem.value;    
+  return finalScore;
+};
 
 var init = function () {
+  finalScore = 10;
+  finalScoreElem.value = finalScore;
   scores = [0,0];
   activePlayer = 0;
   roundScore = 0;
@@ -138,7 +146,7 @@ var holdScores = function () {
     document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
 
     // 3. Check if player won the game
-    if (scores[activePlayer] >= 100) {
+    if (scores[activePlayer] >= finalScore) {
       console.log(scores[activePlayer]+ '>20');
       document.querySelector('#name-' + activePlayer).textContent = 'WINNER!';
       document.querySelector('.player-' + activePlayer + "-panel").classList.add('winner');
@@ -154,3 +162,4 @@ init();
 rollBtn.addEventListener('click', rollDice);
 holdBtn.addEventListener('click', holdScores);
 newBtn.addEventListener('click', init);
+finalScoreElem.addEventListener('input', getInputValue);
