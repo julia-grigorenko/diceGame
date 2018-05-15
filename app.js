@@ -86,6 +86,8 @@ var switchPlayerPanel = function () {
 var nextPlayer = function () {
   // 1.Set 0 current scores to previous player
   roundScore = 0;
+  dice = 0;
+  console.log('b' + roundScore);
   isOne = false;
 
   // 2.display  previous player`s current scores
@@ -101,7 +103,7 @@ var nextPlayer = function () {
 var checkDicesForOne = function () {
   for (var i = 0; i < diceDom.length; i++) {
     if (dices[i] === 1) {
-      isOne = true;    
+      isOne = true;
     }
    }
 };
@@ -131,6 +133,7 @@ var rollDice = function () {
         document.querySelector('#current-' + activePlayer).textContent = roundScore;
     } else {
       // 4. Turn to next player
+      console.log('a' + roundScore);
       nextPlayer();
     }
   }
